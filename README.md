@@ -39,11 +39,3 @@ HeidiSQL을 통해 localhost 환경에서 추출된 덤프 파일을 버전 관�
   - 총 **148개 질문**과 답변 데이터  
 
 ---
-
-## ⚙️ 사용 방법
-
-### 1. 데이터베이스 생성
-```sql
-CREATE DATABASE artnex 
-  CHARACTER SET utf8mb4 
-  COLLATE utf8mb4_general_ci;
