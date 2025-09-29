@@ -1,0 +1,227 @@
+-- --------------------------------------------------------
+-- 호스트:                          127.0.0.1
+-- 서버 버전:                        11.8.3-MariaDB - mariadb.org binary distribution
+-- 서버 OS:                        Win64
+-- HeidiSQL 버전:                  12.11.0.7065
+-- --------------------------------------------------------
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+-- artnex 데이터베이스 구조 내보내기
+CREATE DATABASE IF NOT EXISTS `artnex` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci */;
+USE `artnex`;
+
+-- 테이블 artnex.question_bank 구조 내보내기
+CREATE TABLE IF NOT EXISTS `question_bank` (
+  `id` varchar(16) NOT NULL COMMENT '질문 ID (Q1, Q2A, Q10D 등)',
+  `prompt` text DEFAULT NULL COMMENT '질문 문구 (가변 길이, 최대 수천자 가능)',
+  `answers_str` text DEFAULT NULL COMMENT '답변 목록 (key, label, deltas) 전체를 저장',
+  `next_map_str` text DEFAULT NULL COMMENT '선택지 → 다음 질문 ID 매핑',
+  `adaptive_axis` enum('hue','value','chroma','contrast') DEFAULT NULL COMMENT '해당 질문이 주로 반영하는 축 (없으면 NULL)',
+  `version` varchar(50) DEFAULT NULL COMMENT '문항/스키마 버전 관리용',
+  `updated_at` datetime DEFAULT NULL COMMENT '최종 갱신 시각',
+  `answer_key` char(1) NOT NULL DEFAULT '1',
+  `order_no` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`,`answer_key`),
+  KEY `idx_order_no` (`order_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- 테이블 데이터 artnex.question_bank:~148 rows (대략적) 내보내기
+INSERT INTO `question_bank` (`id`, `prompt`, `answers_str`, `next_map_str`, `adaptive_axis`, `version`, `updated_at`, `answer_key`, `order_no`) VALUES
+	('Q1', 'Q1. 지금 눈에 가장 끌리는 색감 조합은 무엇인가요?', '① 코랄·살구·라임 같은 밝은 파스텔, hue:1, value:1, chroma:1', 'Q2A,Q2B,Q2C,Q2D', NULL, 'v1', '2025-09-29 15:01:04', '1', 1),
+	('Q1', 'Q1. 지금 눈에 가장 끌리는 색감 조합은 무엇인가요?', '② 라일락·소프트 블루·그레이시, hue:-1, value:1, chroma:-1', 'Q2A,Q2B,Q2C,Q2D', NULL, 'v1', '2025-09-29 15:01:04', '2', 1),
+	('Q1', 'Q1. 지금 눈에 가장 끌리는 색감 조합은 무엇인가요?', '③ 머스타드·올리브·테라코타 같은 어스톤, hue:1, value:-1, chroma:-1', 'Q2A,Q2B,Q2C,Q2D', NULL, 'v1', '2025-09-29 15:01:04', '3', 1),
+	('Q1', 'Q1. 지금 눈에 가장 끌리는 색감 조합은 무엇인가요?', '④ 버건디·네이비·블랙의 선명 대비, hue:-1, value:-1, contrast:1', 'Q2A,Q2B,Q2C,Q2D', NULL, 'v1', '2025-09-29 15:01:04', '4', 1),
+	('Q10A', 'Q10A. 파스텔 브랜딩 촬영 조명은?', '① 부드러운 확산광(하이키), value:1, chroma:-1', NULL, 'value', 'v1', '2025-09-29 15:01:04', '1', 34),
+	('Q10A', 'Q10A. 파스텔 브랜딩 촬영 조명은?', '② 자연광+리플렉터, value:1', NULL, 'value', 'v1', '2025-09-29 15:01:04', '2', 34),
+	('Q10A', 'Q10A. 파스텔 브랜딩 촬영 조명은?', '③ 컬러젤로 포인트, chroma:1', NULL, 'value', 'v1', '2025-09-29 15:01:04', '3', 34),
+	('Q10A', 'Q10A. 파스텔 브랜딩 촬영 조명은?', '④ 역광 실루엣, value:-1, contrast:1', NULL, 'value', 'v1', '2025-09-29 15:01:04', '4', 34),
+	('Q10B', 'Q10B. 소프트/쿨 촬영 조명은?', '① 소프트박스 하이키, value:1, chroma:-1', NULL, 'value', 'v1', '2025-09-29 15:01:04', '1', 35),
+	('Q10B', 'Q10B. 소프트/쿨 촬영 조명은?', '② 창가 자연광, value:1', NULL, 'value', 'v1', '2025-09-29 15:01:04', '2', 35),
+	('Q10B', 'Q10B. 소프트/쿨 촬영 조명은?', '③ 아이시 블루 젤, hue:-1, chroma:1', NULL, 'value', 'v1', '2025-09-29 15:01:04', '3', 35),
+	('Q10B', 'Q10B. 소프트/쿨 촬영 조명은?', '④ 하드 라이트 콘트라스트, value:-1, contrast:1', NULL, 'value', 'v1', '2025-09-29 15:01:04', '4', 35),
+	('Q10C', 'Q10C. 어스톤 촬영 조명은?', '① 따뜻한 확산광(로키), hue:1, value:-1', NULL, 'value', 'v1', '2025-09-29 15:01:04', '1', 36),
+	('Q10C', 'Q10C. 어스톤 촬영 조명은?', '② 윈도우 자연광', NULL, 'value', 'v1', '2025-09-29 15:01:04', '2', 36),
+	('Q10C', 'Q10C. 어스톤 촬영 조명은?', '③ 브론즈 젤 포인트, hue:1, chroma:1', NULL, 'value', 'v1', '2025-09-29 15:01:04', '3', 36),
+	('Q10C', 'Q10C. 어스톤 촬영 조명은?', '④ 그림자 강조 사이드광, value:-1, contrast:1', NULL, 'value', 'v1', '2025-09-29 15:01:04', '4', 36),
+	('Q10D', 'Q10D. 하이컨 촬영 조명은?', '① 하이키+리무버(클리어), value:1, chroma:1', NULL, 'value', 'v1', '2025-09-29 15:01:04', '1', 37),
+	('Q10D', 'Q10D. 하이컨 촬영 조명은?', '② 하프 소프트(뉴트럴)', NULL, 'value', 'v1', '2025-09-29 15:01:04', '2', 37),
+	('Q10D', 'Q10D. 하이컨 촬영 조명은?', '③ 컬러젤 하드포인트, chroma:1, contrast:1', NULL, 'value', 'v1', '2025-09-29 15:01:04', '3', 37),
+	('Q10D', 'Q10D. 하이컨 촬영 조명은?', '④ 로우키 하드라이트, value:-1, contrast:1', NULL, 'value', 'v1', '2025-09-29 15:01:04', '4', 37),
+	('Q2A', 'Q2. 산뜻한 파스텔 감성에 어울리는 패키지 마감은?', '① 글로시 코팅으로 반짝, chroma:1', 'Q3A,Q3B,Q3C,Q3D', 'chroma', 'v1', '2025-09-29 15:01:04', '1', 2),
+	('Q2A', 'Q2. 산뜻한 파스텔 감성에 어울리는 패키지 마감은?', '② 매트 코팅으로 부드럽고 고급, chroma:-1', 'Q3A,Q3B,Q3C,Q3D', 'chroma', 'v1', '2025-09-29 15:01:04', '2', 2),
+	('Q2A', 'Q2. 산뜻한 파스텔 감성에 어울리는 패키지 마감은?', '③ 양각/박 포인트, contrast:1', 'Q3A,Q3B,Q3C,Q3D', 'chroma', 'v1', '2025-09-29 15:01:04', '3', 2),
+	('Q2A', 'Q2. 산뜻한 파스텔 감성에 어울리는 패키지 마감은?', '④ 종이 질감 내추럴, value:-1, chroma:-1', 'Q3A,Q3B,Q3C,Q3D', 'chroma', 'v1', '2025-09-29 15:01:04', '4', 2),
+	('Q2B', 'Q2. 라일락·소프트 블루 계열에서 선호하는 질감은?', '① 비단처럼 은은한 광택, value:1, chroma:-1', 'Q3A,Q3B,Q3C,Q3D', 'chroma', 'v1', '2025-09-29 15:01:04', '1', 3),
+	('Q2B', 'Q2. 라일락·소프트 블루 계열에서 선호하는 질감은?', '② 분채감 있는 파우더리, chroma:-1', 'Q3A,Q3B,Q3C,Q3D', 'chroma', 'v1', '2025-09-29 15:01:04', '2', 3),
+	('Q2B', 'Q2. 라일락·소프트 블루 계열에서 선호하는 질감은?', '③ 투명감 있는 반짝임, value:1, chroma:1', 'Q3A,Q3B,Q3C,Q3D', 'chroma', 'v1', '2025-09-29 15:01:04', '3', 3),
+	('Q2B', 'Q2. 라일락·소프트 블루 계열에서 선호하는 질감은?', '④ 직물/한지 텍스처, value:-1, chroma:-1', 'Q3A,Q3B,Q3C,Q3D', 'chroma', 'v1', '2025-09-29 15:01:04', '4', 3),
+	('Q2C', 'Q2. 어스톤 선택! 공간 조명은?', '① 따뜻한 전구색, hue:1, value:-1', 'Q3A,Q3B,Q3C,Q3D', 'hue', 'v1', '2025-09-29 15:01:04', '1', 4),
+	('Q2C', 'Q2. 어스톤 선택! 공간 조명은?', '② 자연광에 가까운 중성', 'Q3A,Q3B,Q3C,Q3D', 'hue', 'v1', '2025-09-29 15:01:04', '2', 4),
+	('Q2C', 'Q2. 어스톤 선택! 공간 조명은?', '③ 차가운 주백색, hue:-1, value:1', 'Q3A,Q3B,Q3C,Q3D', 'hue', 'v1', '2025-09-29 15:01:04', '3', 4),
+	('Q2C', 'Q2. 어스톤 선택! 공간 조명은?', '④ 스폿/명암 강조, value:-1, contrast:1', 'Q3A,Q3B,Q3C,Q3D', 'hue', 'v1', '2025-09-29 15:01:04', '4', 4),
+	('Q2D', 'Q2. 선명 대비! 액세서리는?', '① 골드, hue:1', 'Q3A,Q3B,Q3C,Q3D', 'contrast', 'v1', '2025-09-29 15:01:04', '1', 5),
+	('Q2D', 'Q2. 선명 대비! 액세서리는?', '② 실버, hue:-1, contrast:1', 'Q3A,Q3B,Q3C,Q3D', 'contrast', 'v1', '2025-09-29 15:01:04', '2', 5),
+	('Q2D', 'Q2. 선명 대비! 액세서리는?', '③ 블랙/화이트 믹스, contrast:1', 'Q3A,Q3B,Q3C,Q3D', 'contrast', 'v1', '2025-09-29 15:01:04', '3', 5),
+	('Q2D', 'Q2. 선명 대비! 액세서리는?', '④ 우드/레더 내추럴, hue:1, value:-1, chroma:-1', 'Q3A,Q3B,Q3C,Q3D', 'contrast', 'v1', '2025-09-29 15:01:04', '4', 5),
+	('Q3A', 'Q3A. 파스텔 톤 로고/배경 조합에서 더 예쁜 대비는?', '① 라이트 베이지 배경 + 크림 로고(매우 부드러움), value:1, contrast:-1', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '1', 6),
+	('Q3A', 'Q3A. 파스텔 톤 로고/배경 조합에서 더 예쁜 대비는?', '② 라이트 배경 + 파스텔 로고(적당한 선명함)', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '2', 6),
+	('Q3A', 'Q3A. 파스텔 톤 로고/배경 조합에서 더 예쁜 대비는?', '③ 화이트 배경 + 비비드 파스텔 로고(선명 강조), value:-1, contrast:1', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '3', 6),
+	('Q3A', 'Q3A. 파스텔 톤 로고/배경 조합에서 더 예쁜 대비는?', '④ 파스텔 톤온톤(유사색) 조합, chroma:-1, contrast:-1', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '4', 6),
+	('Q3B', 'Q3B. 소프트/쿨 무드에서 로고-배경 대비는?', '① 안개 낀 듯한 연그레이 + 소프트 라일락, value:1, contrast:-1', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '1', 7),
+	('Q3B', 'Q3B. 소프트/쿨 무드에서 로고-배경 대비는?', '② 라이트 그레이 + 네이비(보통 대비)', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '2', 7),
+	('Q3B', 'Q3B. 소프트/쿨 무드에서 로고-배경 대비는?', '③ 차콜 + 화이트 로고(높은 대비), value:-1, contrast:1', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '3', 7),
+	('Q3B', 'Q3B. 소프트/쿨 무드에서 로고-배경 대비는?', '④ 애쉬 톤 톤온톤, chroma:-1, contrast:-1', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '4', 7),
+	('Q3C', 'Q3C. 어스톤 브랜딩에서 어울리는 대비는?', '① 샌드 베이지 + 모카 로고(낮은 대비), value:1, contrast:-1', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '1', 8),
+	('Q3C', 'Q3C. 어스톤 브랜딩에서 어울리는 대비는?', '② 크래프트지 + 다크 브라운(보통 대비)', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '2', 8),
+	('Q3C', 'Q3C. 어스톤 브랜딩에서 어울리는 대비는?', '③ 테라코타 + 아이보리(높은 대비), value:-1, contrast:1', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '3', 8),
+	('Q3C', 'Q3C. 어스톤 브랜딩에서 어울리는 대비는?', '④ 카키 톤온톤, chroma:-1, contrast:-1', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '4', 8),
+	('Q3D', 'Q3D. 하이 컨트라스트 연출에서 선호하는 대비는?', '① 딥 네이비 + 슬레이트 로고(상대적 저대비), value:1, contrast:-1', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '1', 9),
+	('Q3D', 'Q3D. 하이 컨트라스트 연출에서 선호하는 대비는?', '② 네이비 + 화이트(보통~높음)', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '2', 9),
+	('Q3D', 'Q3D. 하이 컨트라스트 연출에서 선호하는 대비는?', '③ 블랙 + 화이트(최대 대비), value:-1, contrast:1', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '3', 9),
+	('Q3D', 'Q3D. 하이 컨트라스트 연출에서 선호하는 대비는?', '④ 모노톤 톤온톤, chroma:-1, contrast:-1', 'Q4A,Q4B,Q4C,Q4D', 'contrast', 'v1', '2025-09-29 15:01:04', '4', 9),
+	('Q4A', 'Q4A. 자연광에서 얼굴이 맑아보이는 파스텔 쪽은?', '① 피치/코랄/살구, hue:1, value:1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '1', 10),
+	('Q4A', 'Q4A. 자연광에서 얼굴이 맑아보이는 파스텔 쪽은?', '② 민트/스카이/라벤더 파스텔, hue:-1, value:1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '2', 10),
+	('Q4A', 'Q4A. 자연광에서 얼굴이 맑아보이는 파스텔 쪽은?', '③ 허니/머스타드/카멜, hue:1, value:-1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '3', 10),
+	('Q4A', 'Q4A. 자연광에서 얼굴이 맑아보이는 파스텔 쪽은?', '④ 버건디·네이비 파스텔 포인트, hue:-1, value:-1, contrast:1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '4', 10),
+	('Q4B', 'Q4B. 쿨/소프트 톤에서 더 생기 있어 보이는 색감은?', '① 로지/살구(웜기 가미), hue:1, value:1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '1', 11),
+	('Q4B', 'Q4B. 쿨/소프트 톤에서 더 생기 있어 보이는 색감은?', '② 라일락/쿨핑크/베이비 블루, hue:-1, value:1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '2', 11),
+	('Q4B', 'Q4B. 쿨/소프트 톤에서 더 생기 있어 보이는 색감은?', '③ 그레이지/올리브 뉴트럴, hue:1, value:-1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '3', 11),
+	('Q4B', 'Q4B. 쿨/소프트 톤에서 더 생기 있어 보이는 색감은?', '④ 네이비/차콜(딥 쿨), hue:-1, value:-1, contrast:1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '4', 11),
+	('Q4C', 'Q4C. 어스톤 팔레트에서 얼굴 톤이 살아나는 색은?', '① 살구/코랄/테라코타 웜, hue:1, value:1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '1', 12),
+	('Q4C', 'Q4C. 어스톤 팔레트에서 얼굴 톤이 살아나는 색은?', '② 더스티 라일락/슬레이트, hue:-1, value:1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '2', 12),
+	('Q4C', 'Q4C. 어스톤 팔레트에서 얼굴 톤이 살아나는 색은?', '③ 올리브/머스타드/카멜, hue:1, value:-1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '3', 12),
+	('Q4C', 'Q4C. 어스톤 팔레트에서 얼굴 톤이 살아나는 색은?', '④ 딥 와인/초콜릿, hue:-1, value:-1, contrast:1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '4', 12),
+	('Q4D', 'Q4D. 선명 대비 무드에서 얼굴이 또렷해지는 색은?', '① 코럴/피치로 밝게, hue:1, value:1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '1', 13),
+	('Q4D', 'Q4D. 선명 대비 무드에서 얼굴이 또렷해지는 색은?', '② 아이시 라일락/블루로 차갑게, hue:-1, value:1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '2', 13),
+	('Q4D', 'Q4D. 선명 대비 무드에서 얼굴이 또렷해지는 색은?', '③ 카멜/탠으로 안정감, hue:1, value:-1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '3', 13),
+	('Q4D', 'Q4D. 선명 대비 무드에서 얼굴이 또렷해지는 색은?', '④ 버건디/네이비/블랙으로 카리스마, hue:-1, value:-1, contrast:1', 'Q5A,Q5B,Q5C,Q5D', 'hue', 'v1', '2025-09-29 15:01:04', '4', 13),
+	('Q5A', 'Q5A. 파스텔 패키지 표면 질감, 어떤 쪽이 더 예뻐요?', '① 유리알 같은 글로시 라미네이트, chroma:1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '1', 14),
+	('Q5A', 'Q5A. 파스텔 패키지 표면 질감, 어떤 쪽이 더 예뻐요?', '② 보송보송 소프트 매트, chroma:-1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '2', 14),
+	('Q5A', 'Q5A. 파스텔 패키지 표면 질감, 어떤 쪽이 더 예뻐요?', '③ 홀로/메탈 포일 포인트, chroma:1, contrast:1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '3', 14),
+	('Q5A', 'Q5A. 파스텔 패키지 표면 질감, 어떤 쪽이 더 예뻐요?', '④ FSC 무광지 내추럴, value:-1, chroma:-1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '4', 14),
+	('Q5B', 'Q5B. 소프트/쿨 브랜딩에서 선호 질감은?', '① 새틴광(부드러운 반사), chroma:1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '1', 15),
+	('Q5B', 'Q5B. 소프트/쿨 브랜딩에서 선호 질감은?', '② 베이비 스킨 매트, chroma:-1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '2', 15),
+	('Q5B', 'Q5B. 소프트/쿨 브랜딩에서 선호 질감은?', '③ 실버 포일/메탈릭 엣지, chroma:1, contrast:1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '3', 15),
+	('Q5B', 'Q5B. 소프트/쿨 브랜딩에서 선호 질감은?', '④ 텍스처지(엠보/린넨), value:-1, chroma:-1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '4', 15),
+	('Q5C', 'Q5C. 어스톤 패키지에 어울리는 표면감은?', '① 오일드 글로시(약광택), chroma:1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '1', 16),
+	('Q5C', 'Q5C. 어스톤 패키지에 어울리는 표면감은?', '② 분말감 매트, chroma:-1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '2', 16),
+	('Q5C', 'Q5C. 어스톤 패키지에 어울리는 표면감은?', '③ 구리/브론즈 포일, chroma:1, contrast:1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '3', 16),
+	('Q5C', 'Q5C. 어스톤 패키지에 어울리는 표면감은?', '④ 크래프트/리사이클 페이퍼, value:-1, chroma:-1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '4', 16),
+	('Q5D', 'Q5D. 하이 컨트라스트 룩에서 질감 포인트는?', '① 하이글로스 UV 코팅, chroma:1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '1', 17),
+	('Q5D', 'Q5D. 하이 컨트라스트 룩에서 질감 포인트는?', '② 벨벳 소프트 터치, chroma:-1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '2', 17),
+	('Q5D', 'Q5D. 하이 컨트라스트 룩에서 질감 포인트는?', '③ 블랙 포일/미러 실버, chroma:1, contrast:1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '3', 17),
+	('Q5D', 'Q5D. 하이 컨트라스트 룩에서 질감 포인트는?', '④ 매트 블랙 보드, value:-1, chroma:-1', 'Q6A,Q6B,Q6C,Q6D', 'chroma', 'v1', '2025-09-29 15:01:04', '4', 17),
+	('Q6A', 'Q6A. 매장 무드(음악/향) – 파스텔 감성에 더 맞는 쪽은?', '① 시티팝/시트러스 허브(밝고 경쾌), value:1, chroma:1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '1', 18),
+	('Q6A', 'Q6A. 매장 무드(음악/향) – 파스텔 감성에 더 맞는 쪽은?', '② 어쿠스틱/파우더리 플로럴(잔잔), value:1, chroma:-1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '2', 18),
+	('Q6A', 'Q6A. 매장 무드(음악/향) – 파스텔 감성에 더 맞는 쪽은?', '③ 재즈/스파이시 우디(따뜻·묵직), hue:1, value:-1, chroma:-1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '3', 18),
+	('Q6A', 'Q6A. 매장 무드(음악/향) – 파스텔 감성에 더 맞는 쪽은?', '④ 일렉/화이트 머스크(차갑·선명), hue:-1, value:-1, contrast:1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '4', 18),
+	('Q6B', 'Q6B. 소프트/쿨 무드의 음악/향으로 더 가까운 쪽은?', '① 로파이/그린 시트러스, value:1, chroma:1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '1', 19),
+	('Q6B', 'Q6B. 소프트/쿨 무드의 음악/향으로 더 가까운 쪽은?', '② 피아노 솔로/파우더리, value:1, chroma:-1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '2', 19),
+	('Q6B', 'Q6B. 소프트/쿨 무드의 음악/향으로 더 가까운 쪽은?', '③ 클래식/우디 앰버, hue:1, value:-1, chroma:-1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '3', 19),
+	('Q6B', 'Q6B. 소프트/쿨 무드의 음악/향으로 더 가까운 쪽은?', '④ 신스팝/아이시 머스크, hue:-1, value:-1, contrast:1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '4', 19),
+	('Q6C', 'Q6C. 어스톤 매장 무드에서 선호는?', '① 보사노바/허브 시트러스, value:1, chroma:1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '1', 20),
+	('Q6C', 'Q6C. 어스톤 매장 무드에서 선호는?', '② 포크/파우더리 머스크, value:1, chroma:-1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '2', 20),
+	('Q6C', 'Q6C. 어스톤 매장 무드에서 선호는?', '③ 블루스/스파이스 우드, hue:1, value:-1, chroma:-1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '3', 20),
+	('Q6C', 'Q6C. 어스톤 매장 무드에서 선호는?', '④ 미니멀 테크노/클린 머스크, hue:-1, value:-1, contrast:1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '4', 20),
+	('Q6D', 'Q6D. 하이 컨트라스트 공간의 사운드/향은?', '① 업비트/시트러스 제스트, value:1, chroma:1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '1', 21),
+	('Q6D', 'Q6D. 하이 컨트라스트 공간의 사운드/향은?', '② 미드템포/파우더리, value:1, chroma:-1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '2', 21),
+	('Q6D', 'Q6D. 하이 컨트라스트 공간의 사운드/향은?', '③ 딥하우스/스파이스 우드, hue:1, value:-1, chroma:-1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '3', 21),
+	('Q6D', 'Q6D. 하이 컨트라스트 공간의 사운드/향은?', '④ 인더스트리얼/화이트 머스크, hue:-1, value:-1, contrast:1', 'Q7A,Q7B,Q7C,Q7D', NULL, 'v1', '2025-09-29 15:01:04', '4', 21),
+	('Q7A', 'Q7A. 파스텔 메이크업에서 중요한 발색 감은?', '① 물광처럼 맑은 생기, value:1, chroma:1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '1', 22),
+	('Q7A', 'Q7A. 파스텔 메이크업에서 중요한 발색 감은?', '② 복숭앗빛 뽀얀 발색, value:1, chroma:-1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '2', 22),
+	('Q7A', 'Q7A. 파스텔 메이크업에서 중요한 발색 감은?', '③ 웜 브라운으로 깊이감, value:-1, chroma:-1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '3', 22),
+	('Q7A', 'Q7A. 파스텔 메이크업에서 중요한 발색 감은?', '④ 비비드 포인트 한 번에, chroma:1, contrast:1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '4', 22),
+	('Q7B', 'Q7B. 소프트/쿨 메이크업 발색 취향은?', '① 투명하게 올라오는 쿨 핑크, value:1, chroma:1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '1', 23),
+	('Q7B', 'Q7B. 소프트/쿨 메이크업 발색 취향은?', '② 안개 낀 듯한 그라데, value:1, chroma:-1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '2', 23),
+	('Q7B', 'Q7B. 소프트/쿨 메이크업 발색 취향은?', '③ 더스티 로즈로 차분함, value:-1, chroma:-1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '3', 23),
+	('Q7B', 'Q7B. 소프트/쿨 메이크업 발색 취향은?', '④ 딥 플럼으로 선명 포인트, chroma:1, contrast:1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '4', 23),
+	('Q7C', 'Q7C. 어스톤 메이크업 발색 선호는?', '① 꿀광·립밤 같은 생기, value:1, chroma:1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '1', 24),
+	('Q7C', 'Q7C. 어스톤 메이크업 발색 선호는?', '② 무화과 같은 소프트 톤, value:1, chroma:-1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '2', 24),
+	('Q7C', 'Q7C. 어스톤 메이크업 발색 선호는?', '③ 카카오/시나몬의 깊이, value:-1, chroma:-1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '3', 24),
+	('Q7C', 'Q7C. 어스톤 메이크업 발색 선호는?', '④ 브릭/코랄로 선명 포인트, chroma:1, contrast:1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '4', 24),
+	('Q7D', 'Q7D. 하이컨 발색에서 가장 중요한 건?', '① 클리어한 광택, value:1, chroma:1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '1', 25),
+	('Q7D', 'Q7D. 하이컨 발색에서 가장 중요한 건?', '② 소프트 포그 처리, value:1, chroma:-1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '2', 25),
+	('Q7D', 'Q7D. 하이컨 발색에서 가장 중요한 건?', '③ 딥 뉴트럴 레이어링, value:-1, chroma:-1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '3', 25),
+	('Q7D', 'Q7D. 하이컨 발색에서 가장 중요한 건?', '④ 원샷 비비드 컬러, chroma:1, contrast:1', 'Q8A,Q8B,Q8C,Q8D', 'chroma', 'v1', '2025-09-29 15:01:04', '4', 25),
+	('Q8A', 'Q8A. 파스텔 룩과 어울리는 헤어 톤은?', '① 라이트 오렌지브라운(따뜻/밝게), hue:1, value:1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '1', 26),
+	('Q8A', 'Q8A. 파스텔 룩과 어울리는 헤어 톤은?', '② 애쉬 브라운/쿨 블랙(차분), hue:-1, value:-1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '2', 26),
+	('Q8A', 'Q8A. 파스텔 룩과 어울리는 헤어 톤은?', '③ 다크 초콜릿(부드럽고 깊게), hue:1, value:-1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '3', 26),
+	('Q8A', 'Q8A. 파스텔 룩과 어울리는 헤어 톤은?', '④ 하이라이트/프레임(대비 강조), value:1, contrast:1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '4', 26),
+	('Q8B', 'Q8B. 소프트/쿨 무드에 맞는 헤어 톤은?', '① 라이트 브라운에 웜 골드 한 방울, hue:1, value:1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '1', 27),
+	('Q8B', 'Q8B. 소프트/쿨 무드에 맞는 헤어 톤은?', '② 애쉬/블루블랙(쿨), hue:-1, value:-1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '2', 27),
+	('Q8B', 'Q8B. 소프트/쿨 무드에 맞는 헤어 톤은?', '③ 밀크초코/쿨브라운(딥소프트), hue:1, value:-1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '3', 27),
+	('Q8B', 'Q8B. 소프트/쿨 무드에 맞는 헤어 톤은?', '④ 플래티넘/모노 블랙(선명), value:1, contrast:1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '4', 27),
+	('Q8C', 'Q8C. 어스톤과 균형 잡히는 헤어 톤은?', '① 카라멜/허니 브라운, hue:1, value:1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '1', 28),
+	('Q8C', 'Q8C. 어스톤과 균형 잡히는 헤어 톤은?', '② 쿨 트루 블랙, hue:-1, value:-1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '2', 28),
+	('Q8C', 'Q8C. 어스톤과 균형 잡히는 헤어 톤은?', '③ 에스프레소/웜 블랙, hue:1, value:-1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '3', 28),
+	('Q8C', 'Q8C. 어스톤과 균형 잡히는 헤어 톤은?', '④ 페이스프레이밍 하이라이트, value:1, contrast:1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '4', 28),
+	('Q8D', 'Q8D. 하이 컨트라스트 룩을 살리는 헤어 톤은?', '① 라이트 코퍼, hue:1, value:1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '1', 29),
+	('Q8D', 'Q8D. 하이 컨트라스트 룩을 살리는 헤어 톤은?', '② 아이시 블루블랙, hue:-1, value:-1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '2', 29),
+	('Q8D', 'Q8D. 하이 컨트라스트 룩을 살리는 헤어 톤은?', '③ 다크 초코 웜, hue:1, value:-1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '3', 29),
+	('Q8D', 'Q8D. 하이 컨트라스트 룩을 살리는 헤어 톤은?', '④ 완전 블론드/제트블랙, value:1, contrast:1', 'Q9A,Q9B,Q9C,Q9D', 'hue', 'v1', '2025-09-29 15:01:04', '4', 29),
+	('Q9A', 'Q9A. 파스텔 무드에서 포인트 액세서리는?', '① 골드 주얼리(따뜻한 반짝임), hue:1, chroma:1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '1', 30),
+	('Q9A', 'Q9A. 파스텔 무드에서 포인트 액세서리는?', '② 펄/새틴(부드러운 광택), value:1, chroma:-1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '2', 30),
+	('Q9A', 'Q9A. 파스텔 무드에서 포인트 액세서리는?', '③ 크리스탈/유리(클리어 포인트), chroma:1, contrast:1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '3', 30),
+	('Q9A', 'Q9A. 파스텔 무드에서 포인트 액세서리는?', '④ 린넨/코튼(내추럴 소재), value:-1, chroma:-1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '4', 30),
+	('Q9B', 'Q9B. 소프트/쿨 무드에서 어울리는 소재는?', '① 실버/화이트골드, hue:-1, contrast:1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '1', 31),
+	('Q9B', 'Q9B. 소프트/쿨 무드에서 어울리는 소재는?', '② 새틴/오간자, value:1, chroma:-1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '2', 31),
+	('Q9B', 'Q9B. 소프트/쿨 무드에서 어울리는 소재는?', '③ 크리스탈 클리어, chroma:1, contrast:1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '3', 31),
+	('Q9B', 'Q9B. 소프트/쿨 무드에서 어울리는 소재는?', '④ 스웨이드/캐시미어, value:-1, chroma:-1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '4', 31),
+	('Q9C', 'Q9C. 어스톤 무드에서 어울리는 소재는?', '① 브론즈/코퍼, hue:1, chroma:1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '1', 32),
+	('Q9C', 'Q9C. 어스톤 무드에서 어울리는 소재는?', '② 스웨이드/누벅, value:-1, chroma:-1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '2', 32),
+	('Q9C', 'Q9C. 어스톤 무드에서 어울리는 소재는?', '③ 유리/세라믹 포인트, chroma:1, contrast:1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '3', 32),
+	('Q9C', 'Q9C. 어스톤 무드에서 어울리는 소재는?', '④ 린넨/마, value:-1, chroma:-1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '4', 32),
+	('Q9D', 'Q9D. 하이컨 무드에서 어울리는 소재는?', '① 미러 실버/크롬, hue:-1, contrast:1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '1', 33),
+	('Q9D', 'Q9D. 하이컨 무드에서 어울리는 소재는?', '② 벨벳/새틴 블랙, value:-1, chroma:-1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '2', 33),
+	('Q9D', 'Q9D. 하이컨 무드에서 어울리는 소재는?', '③ 에나멜/아크릴(광택), chroma:1, contrast:1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '3', 33),
+	('Q9D', 'Q9D. 하이컨 무드에서 어울리는 소재는?', '④ 러버/매트, chroma:-1', 'Q10A,Q10B,Q10C,Q10D', NULL, 'v1', '2025-09-29 15:01:04', '4', 33);
+
+-- 테이블 artnex.style_toolkits 구조 내보내기
+CREATE TABLE IF NOT EXISTS `style_toolkits` (
+  `style_name` varchar(50) DEFAULT NULL COMMENT '스타일 이름 (예: Cute, Romantic 등) - PK',
+  `palette_hex` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '스타일 팔레트 색상 HEX 배열 (예: ["#FFC7D1", ...])',
+  `fonts` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '스타일에 권장되는 폰트 배열',
+  `materials` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '스타일에 맞는 소재/마감 배열',
+  `scent_music` text DEFAULT NULL COMMENT '스타일 분위기를 표현하는 향/음악 키워드',
+  `updated_at` datetime DEFAULT NULL COMMENT '레코드 최종 수정 일시 (자동 업데이트)'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- 테이블 데이터 artnex.style_toolkits:~22 rows (대략적) 내보내기
+INSERT INTO `style_toolkits` (`style_name`, `palette_hex`, `fonts`, `materials`, `scent_music`, `updated_at`) VALUES
+	('Cute', '#FFC7D1, #FFE6A7, #C5F6FA, #FFE8F2, #FDF4FF, #E3F2FF', 'Pretendard SemiBold, Nunito', 'Glossy coating, Pearl paper, Pastel ceramics', 'Citrus/Floral + City Pop', '2025-09-29 12:26:42'),
+	('Romantic', '#F4C2C2, #F6E7E7, #E8D5E5, #FBE4EE, #FDE8E9, #E6CDE5', 'Cormorant, Noto Serif KR', 'Satin ribbon, Soft matte, Lace motif', 'Rose/Powdery + Acoustic', '2025-09-29 12:26:42'),
+	('Noble', '#2E3047, #6B7280, #C7CAD1, #E5E7EB, #B08BBB, #D4D4D8', 'Libre Baskerville, Spoqa Han Sans', 'Foil stamp, Velvet, Glass', 'Woody Amber + Chamber', '2025-09-29 12:26:42'),
+	('Soft Modern', '#DDE2E9, #C7D2FE, #E5E7EB, #CBD5E1, #F1F5F9, #94A3B8', 'Inter, Pretendard', 'Soft-touch matte, Linen emboss', 'Green Citrus + Lofi', '2025-09-29 12:26:42'),
+	('Clear Sporty', '#00C2FF, #FFD60A, #00E676, #FFFFFF, #1A1A1A, #FF3B30', 'Poppins, Montserrat', 'High-gloss UV, Acrylic, Mesh', 'Ozonic/Citrus + EDM/Pop', '2025-09-29 12:26:42'),
+	('Soft Casual', '#EADBC8, #D6CCC2, #B6AD90, #EDEDE9, #DAD7CD, #C2C5AA', 'Rubik, Noto Sans KR', 'Kraft paper, Cotton, Matte', 'Powdery/Musk + Indie', '2025-09-29 12:26:42'),
+	('Feminine', '#FADADD, #F5CEDB, #F3D1F4, #FFE4F3, #E9DEF7, #FFD6E7', 'Playfair Display, Noto Serif KR', 'Pearl, Organza, Satin', 'Floral Bouquet + Ballad', '2025-09-29 12:26:42'),
+	('Soft Elegance', '#EAE7E2, #D9D3C7, #C1BDB1, #ECEBE6, #D7D7CF, #B9B7AE', 'EB Garamond, Pretendard', 'Matte board, Emboss, Linen', 'White Musk + Piano Solo', '2025-09-29 12:26:42'),
+	('Elegance', '#0A0A0A, #1F2937, #E5E7EB, #6B7280, #111827, #9CA3AF', 'Didot, Nanum Myeongjo', 'Black foil, Mirror silver, Glass', 'Iris/Amber + Jazz', '2025-09-29 12:26:42'),
+	('Sporty', '#00BFA6, #FF5252, #FFCA28, #F5F5F5, #263238, #40C4FF', 'Bebas Neue, SUIT', 'Neon vinyl, Acrylic, Mesh', 'Marine/Citrus + Synth Pop', '2025-09-29 12:26:42'),
+	('Casual', '#F8EDEB, #EDE7E3, #CDB4DB, #BDE0FE, #A2D2FF, #FFC8DD', 'Quicksand, Pretendard', 'Cotton, Kraft, Matte', 'Green Tea + Indie Folk', '2025-09-29 12:26:42'),
+	('Traditional', '#7C6A0A, #A68A64, #B08968, #EDE0D4, #7F5539, #9C6644', 'Times New Roman, Nanum Myeongjo', 'Leather, Bronze, Linen', 'Spice/Woody + Classical', '2025-09-29 12:26:42'),
+	('Natural', '#A3B18A, #588157, #3A5A40, #DAD7CD, #BFD7EA, #CCD5AE', 'Merriweather, Noto Sans KR', 'Recycled paper, Wood, Stone', 'Herb/Green + Bossa', '2025-09-29 12:26:42'),
+	('Elegance Gorgeous', '#1C1C1C, #3B3B98, #C9B037, #EFEFEF, #6D214F, #B33771', 'Bodoni, Spoqa Han Sans', 'Mirror chrome, Foil stamp, Velvet', 'Oud/Vanilla + Orchestral', '2025-09-29 12:26:42'),
+	('Dynamic', '#FF4D4D, #00E5FF, #FFD600, #212121, #F5F5F5, #7C4DFF', 'Anton, Pretendard', 'Gloss UV, Acrylic, LED', 'Citrus/Spice + Dance/House', '2025-09-29 12:26:42'),
+	('Ethnic', '#C67C00, #8C2F39, #2F5233, #EAD2AC, #A47E1B, #5E3023', 'Crimson Pro, Nanum Myeongjo', 'Woven fabric, Bronze, Terracotta', 'Incense/Spice + World', '2025-09-29 12:26:42'),
+	('Classic', '#1F1F1F, #F5F5F5, #C0C0C0, #8B8B8B, #2C2C2C, #D9D9D9', 'Garamond, Noto Serif KR', 'Cotton paper, Emboss, Foil(detail)', 'Iris/Tea + String Quartet', '2025-09-29 12:26:42'),
+	('Gorgeous', '#9C27B0, #E91E63, #03A9F4, #212121, #F8BBD0, #B3E5FC', 'Abril Fatface, Pretendard', 'Crystal, Hologram, Gloss', 'Sweet Floral + Pop Diva', '2025-09-29 12:26:42'),
+	('Wild', '#4E342E, #BF360C, #33691E, #212121, #A1887F, #5D4037', 'Oswald, Spoqa Han Sans', 'Leather, Raw wood, Metal', 'Leather/Smoke + Rock', '2025-09-29 12:26:42'),
+	('Dandy', '#101820, #FEE715, #E0E0E0, #4B5563, #111827, #9CA3AF', 'Didot, Noto Sans KR', 'Polished metal, Enamel, Wool', 'Citrus/Iris + Lounge Jazz', '2025-09-29 12:26:42'),
+	('Hard Modern', '#111111, #FFFFFF, #AAAAAA, #1F2937, #E5E7EB, #9CA3AF', 'Neue Haas Grotesk, SUIT', 'Anodized aluminum, Glass, Acrylic', 'Clean Musk + Minimal Techno', '2025-09-29 12:26:42'),
+	('Formal', '#000000, #FFFFFF, #2D2D2D, #BFBFBF, #1F2937, #E5E7EB', 'Trajan, Noto Serif KR', 'Matte board, Cloth foil, Lacquer', 'Vetiver/Iris + Symphony', '2025-09-29 12:26:42');
+
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
